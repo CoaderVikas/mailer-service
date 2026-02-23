@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="font-family: Arial, sans-serif; background: #f7f7f7; padding: 20px;">
+    <div style="max-width:600px; margin:auto; background:#fff; border-radius:8px; padding:20px;">
+        <div style="background:#4CAF50; color:white; text-align:center; padding:15px; font-size:24px;">
+            📧 Notification
+        </div>
+
+        <div style="padding:20px; color:#333;">
+            <p>Hello <strong th:text="${name}">Friend</strong>,</p>
+
+            <p th:text="${message}">
+                This is a test notification from your mailer!
+            </p>
+
+            <div style="text-align:center; margin-top:30px;">
+                <a th:href="${actionUrl}"
+                   style="background:#4CAF50; color:white; padding:10px 20px; text-decoration:none; border-radius:5px;">
+                   Click Here
+                </a>
+            </div>
+        </div>
+
+        <div style="padding:15px; font-size:12px; text-align:center; color:#777;">
+            &copy; 2026 Your App Name
+        </div>
+    </div>
+</body>
+</html>

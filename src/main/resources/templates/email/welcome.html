@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="font-family: Arial, sans-serif; background: #f7f7f7; padding: 20px;">
+    <div style="max-width:600px; margin:auto; background:#fff; border-radius:8px; overflow:hidden;">
+        
+        <!-- Logo -->
+        <div style="background:#ffffff; text-align:center; padding:20px;">
+            <img th:src="@{https://yourdomain.com/logo.png}" alt="Company Logo" width="150">
+        </div>
+        
+        <!-- Header -->
+        <div style="background:#4CAF50; color:white; text-align:center; padding:15px; font-size:22px;">
+            🎉 Welcome to Our App, <span th:text="${name}">User</span>!
+        </div>
+
+        <!-- Content -->
+        <div style="padding:20px; color:#333; line-height:1.5;">
+            <p th:text="${message}">
+                Thanks for joining us! We are excited to have you on board.
+            </p>
+            
+            <div style="text-align:center; margin-top:30px;">
+                <a th:href="${actionUrl}"
+                   style="background:#4CAF50; color:white; padding:12px 25px; text-decoration:none; border-radius:5px;">
+                   Get Started
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="padding:20px; font-size:12px; text-align:center; color:#777; background:#f1f1f1;">
+            <p>
+                Follow us:
+                <a href="https://facebook.com/yourpage" style="color:#4CAF50; text-decoration:none;">Facebook</a> |
+                <a href="https://twitter.com/yourpage" style="color:#4CAF50; text-decoration:none;">Twitter</a> |
+                <a href="https://instagram.com/yourpage" style="color:#4CAF50; text-decoration:none;">Instagram</a>
+            </p>
+            <p>
+                <a href="https://yourapp.com/unsubscribe" style="color:#999; text-decoration:underline;">Unsubscribe</a>
+            </p>
+            <p>&copy; 2026 Your App Name. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

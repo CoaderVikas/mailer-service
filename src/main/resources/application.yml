@@ -1,0 +1,25 @@
+server:
+  port: 9096
+
+spring:
+  application:
+    name: mailer-service
+
+#mailer configuration
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${username}
+    password: ${password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+#sms configuration
+twilio:
+  account-sid: ${TWILIO_SID}
+  auth-token : ${TWILIO_AUTH_TOKEN}
+  phone-number: ${phone-number}
