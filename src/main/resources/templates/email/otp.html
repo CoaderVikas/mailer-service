@@ -1,0 +1,15 @@
+<div style="max-width:600px; margin:auto; background:#fff; border-radius:8px; overflow:hidden;">
+    <div style="text-align:center; padding:20px;">
+        <img th:src="@{https://yourdomain.com/logo.png}" alt="Logo" width="150">
+    </div>
+    <div style="background:#2196F3; color:white; text-align:center; padding:15px; font-size:20px;">
+        Your OTP Code
+    </div>
+    <div style="padding:20px; color:#333; text-align:center;">
+        <h2 th:text="${otp}">123456</h2>
+        <p>This code is valid for 10 minutes.</p>
+    </div>
+    <div style="padding:15px; font-size:12px; text-align:center; color:#777; background:#f1f1f1;">
+        <p><a href="https://yourapp.com/unsubscribe" style="color:#999; text-decoration:underline;">Unsubscribe</a></p>
+    </div>
+</div>
