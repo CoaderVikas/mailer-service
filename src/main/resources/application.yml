@@ -1,5 +1,5 @@
 server:
-  port: 9096
+  port: 9097
 
 spring:
   application:
@@ -23,3 +23,17 @@ twilio:
   account-sid: ${TWILIO_SID}
   auth-token : ${TWILIO_AUTH_TOKEN}
   phone-number: ${phone-number}
+
+#kafka configuration
+  kafka:
+    bootstrap-servers: localhost:9092
+
+    consumer:
+      group-id: mailer-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringSerializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonSerializer 
+
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: com.mailer.event.UserRegisteredEvent
