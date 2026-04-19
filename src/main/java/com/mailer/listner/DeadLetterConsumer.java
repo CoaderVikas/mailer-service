@@ -19,14 +19,21 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DeadLetterConsumer {
 
-    @KafkaListener(topics = "user-registration-dlt", groupId = "mailer-group")
+	// GroupId ko alag rakha hai taaki main group se takkar na ho
+    @KafkaListener(topics = "user-registration-dlt", groupId = "mailer-group-dlt-handler")
     public void consumeDLT(UserRegisteredEvent event) {
+        
+        log.error("XXXX MESSAGE PERMANENTLY FAILED: Event moved to DLT for email: {} XXXX", 
+                  event.getEmail());
 
-        log.error("Event moved to DLT for email {}", event.getEmail());
+        // Tracking ke liye:
+        // 1. Aap ise Database (failed_emails table) mein save kar sakte hain.
+        // 2. Ya Slack/Email alert bhej sakte hain admin ko.
+        saveToDatabase(event);
+    }
 
-        // yaha future me:
-        // DB store
-        // alert
-        // manual retry
+    private void saveToDatabase(UserRegisteredEvent event) {
+        log.info("Saving failed event to DB for manual review: {}", event.getEmail());
+        // Repository logic yahan aayega
     }
 }

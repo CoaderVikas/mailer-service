@@ -25,48 +25,36 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class UserEventConsumer {
-	
+
 	private final MailService mailService;
 
-	@RetryableTopic(
-	        attempts = "3",
-	        // @Backoff(delay = 3000),
-	        topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE,
-	        dltTopicSuffix = "-dlt"
-	    )
+	@RetryableTopic(attempts = "3", 										// Total 3 baar try karega (1 original + 2 retries)
+			// backOff = @Backoff(delay = 3000, multiplier = 2.0), 			// Har baar double gap // lega (3s, 6s)
+			topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE, dltTopicSuffix = "-dlt", include = {Exception.class } // Har tarah ki exception par retry karega
+	)
 	@KafkaListener(topics = "user-registration", groupId = "mailer-group")
-	public void consume(UserRegisteredEvent event) {
-
+	public void consume(UserRegisteredEvent event) throws Exception {
 		try {
+			log.info(">>>> Consuming event for email: {}", event.getEmail());
 
-			log.info("User registration event received for {}", event.getEmail());
-
-			/*MailRequest request = MailRequest.builder()
-					.to(event.getEmail())
-					.toName(event.getFullName())
-					.subject("Welcome to our platform")
-					.body("Your account has been created successfully.")
-					.templateName("welcome").build();*/
 			MailRequest request = prepareWelcomeMail(event);
-			
-
 			mailService.sendMail(request);
-			log.info("Mail request processed for {}", event.getEmail());
+
+			log.info("<<<< Successfully processed mail for: {}", event.getEmail());
 
 		} catch (Exception e) {
+			// Log error with full stack trace for debugging
+			log.error("#### ERROR in MailerService for email: {}. Reason: {}", event.getEmail(), e.getMessage());
 
-			log.error("Failed to process user registration event for {}", event.getEmail(), e);
+			// CRITICAL: Exception ko throw karna zaroori hai
+			// taaki @RetryableTopic ise pakad sake aur Retry/DLT logic chalaye.
+			throw e;
 		}
 	}
-	
+
 	private MailRequest prepareWelcomeMail(UserRegisteredEvent user) {
 		return MailRequest.builder().to(user.getEmail()).toName(user.getFullName()).subject("Welcome to Our App!")
-				.templateName("welcome")
-				.body("Hello " + user.getFullName() + ",\n\n"
-						+ "Welcome to Our App! We're excited to have you on board. "
-						+ "Get started by exploring our features and managing your profile.\n\n"
-						+ "Happy journey,\nThe App Team")
+				.templateName("welcome").body("Hello " + user.getFullName() + ",\n\nWelcome on board!")
 				.actionUrl("https://yourapp.com/dashboard").build();
 	}
-
 }
