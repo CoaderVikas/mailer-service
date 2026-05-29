@@ -5,12 +5,15 @@ spring:
   application:
     name: mailer-service
 
-  # Mail configuration (spring ke andar)
+  profiles:
+    active: dev
+
+  # Mail configuration
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${username}
-    password: ${password}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -18,18 +21,21 @@ spring:
           starttls:
             enable: true
 
-  # Kafka configuration (ISE BHI SPRING KE ANDAR HONA CHAHIYE)
+  # Kafka configuration
   kafka:
-    bootstrap-servers: ${kafka_bootstrap_servers}
-    username: ${kafka_username}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    username: ${KAFKA_USERNAME}
     password: ${KAFKA_PASSWORD}
     properties:
       security.protocol: SASL_SSL
       sasl:
         mechanism: SCRAM-SHA-256
-        jaas.config: 'org.apache.kafka.common.security.scram.ScramLoginModule required username="${kafka_username}" password="${KAFKA_PASSWORD}";'
+        jaas.config: >
+          org.apache.kafka.common.security.scram.ScramLoginModule required
+          username="${KAFKA_USERNAME}"
+          password="${KAFKA_PASSWORD}";
     consumer:
-      group-id: mailer-group
+      group-id: mailer-group-dev
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
@@ -37,8 +43,8 @@ spring:
         spring.json.trusted.packages: "*"
         spring.json.value.default.type: com.mailer.event.UserRegisteredEvent
 
-# Twilio (Ye spring ke bahar rahega, top level par)
+# Twilio configuration
 twilio:
   account-sid: ${TWILIO_SID}
   auth-token: ${TWILIO_AUTH_TOKEN}
-  phone-number: ${phone-number}
+  phone-number: ${TWILIO_PHONE_NUMBER}

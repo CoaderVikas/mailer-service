@@ -28,10 +28,11 @@ public class UserEventConsumer {
 
 	private final MailService mailService;
 
-	@RetryableTopic(attempts = "3", 										// Total 3 baar try karega (1 original + 2 retries)
-			// backOff = @Backoff(delay = 3000, multiplier = 2.0), 			// Har baar double gap // lega (3s, 6s)
-			topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE, dltTopicSuffix = "-dlt", include = {Exception.class } // Har tarah ki exception par retry karega
-	)
+	/*@RetryableTopic(attempts = "3",
+			// backOff = @Backoff(delay = 3000, multiplier = 2.0), 
+			topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE, 
+			dltTopicSuffix = "-dlt", include = {Exception.class } 
+	)*/
 	@KafkaListener(topics = "user-registration", groupId = "mailer-group")
 	public void consume(UserRegisteredEvent event) throws Exception {
 		try {
@@ -46,8 +47,6 @@ public class UserEventConsumer {
 			// Log error with full stack trace for debugging
 			log.error("#### ERROR in MailerService for email: {}. Reason: {}", event.getEmail(), e.getMessage());
 
-			// CRITICAL: Exception ko throw karna zaroori hai
-			// taaki @RetryableTopic ise pakad sake aur Retry/DLT logic chalaye.
 			throw e;
 		}
 	}

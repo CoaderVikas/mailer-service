@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -19,36 +20,37 @@ import com.mailer.event.UserRegisteredEvent;
 @EnableKafka
 public class KafkaConsumerConfig {
 
+	@Value("${spring.kafka.bootstrap-servers}")
+	private String bootstrapServers;
+
+	@Value("${spring.kafka.properties.sasl.jaas.config}")
+	private String jaasConfig;
+
 	@Bean
 	public ConsumerFactory<String, UserRegisteredEvent> consumerFactory() {
+		Map<String, Object> props = new HashMap<>();
 
-	    Map<String, Object> props = new HashMap<>();
+		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+		props.put(ConsumerConfig.GROUP_ID_CONFIG, "mailer-group");
+		props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
-	    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-	    props.put(ConsumerConfig.GROUP_ID_CONFIG, "mailer-group");
-	    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-	    props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-	    props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
-	    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
+		props.put("security.protocol", "SASL_SSL");
+		props.put("sasl.mechanism", "SCRAM-SHA-256");
+		props.put("sasl.jaas.config", jaasConfig);
 
-	    JsonDeserializer<UserRegisteredEvent> deserializer =
-	            new JsonDeserializer<>(UserRegisteredEvent.class, false);
+		props.put("ssl.truststore.type", "PEM");
+		props.put("ssl.truststore.location", "src/main/resources/ca.pem");
+		
+		JsonDeserializer<UserRegisteredEvent> deserializer = new JsonDeserializer<>(UserRegisteredEvent.class, false);
+		deserializer.addTrustedPackages("*");
 
-	    return new DefaultKafkaConsumerFactory<>(
-	            props,
-	            new StringDeserializer(),
-	            deserializer
-	    );
+		return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
 	}
 
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, UserRegisteredEvent> kafkaListenerContainerFactory() {
-
-        ConcurrentKafkaListenerContainerFactory<String, UserRegisteredEvent> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
-
-        factory.setConsumerFactory(consumerFactory());
-
-        return factory;
-    }
+	@Bean
+	public ConcurrentKafkaListenerContainerFactory<String, UserRegisteredEvent> kafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, UserRegisteredEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
+		factory.setConsumerFactory(consumerFactory());
+		return factory;
+	}
 }
