@@ -5,9 +5,6 @@ spring:
   application:
     name: mailer-service
 
-  profiles:
-    active: dev
-
   # Mail configuration
   mail:
     host: smtp.gmail.com
