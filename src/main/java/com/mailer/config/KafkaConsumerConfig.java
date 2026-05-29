@@ -1,5 +1,9 @@
 package com.mailer.config;
 
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,13 +42,36 @@ public class KafkaConsumerConfig {
 		props.put("sasl.mechanism", "SCRAM-SHA-256");
 		props.put("sasl.jaas.config", jaasConfig);
 
+		// PEM setup using the private method
 		props.put("ssl.truststore.type", "PEM");
-		props.put("ssl.truststore.location", "src/main/resources/ca.pem");
+		props.put("ssl.truststore.location", getCertFilePath());
 		
 		JsonDeserializer<UserRegisteredEvent> deserializer = new JsonDeserializer<>(UserRegisteredEvent.class, false);
 		deserializer.addTrustedPackages("*");
 
 		return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
+	}
+
+	/**
+	 * Private method to read ca.pem from resources and create a temporary file.
+	 * This ensures the file is readable even when running from a JAR on Render.
+	 */
+	private String getCertFilePath() {
+		try {
+			InputStream inputStream = getClass().getClassLoader().getResourceAsStream("ca.pem");
+			if (inputStream == null) {
+				throw new RuntimeException("Certificate file 'ca.pem' not found in resources folder");
+			}
+
+			File tempFile = File.createTempFile("kafka-ca", ".pem");
+			tempFile.deleteOnExit();
+
+			Files.copy(inputStream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			
+			return tempFile.getAbsolutePath();
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to load Kafka SSL certificate", e);
+		}
 	}
 
 	@Bean
