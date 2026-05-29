@@ -44,4 +44,4 @@ spring:
 twilio:
   account-sid: ${TWILIO_SID}
   auth-token: ${TWILIO_AUTH_TOKEN}
-  phone-number: ${TWILIO_PHONE_NUMBER}
+  phone-number: ${phone-number}
