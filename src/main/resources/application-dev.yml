@@ -45,3 +45,15 @@ twilio:
   account-sid: ${TWILIO_SID}
   auth-token: ${TWILIO_AUTH_TOKEN}
   phone-number: ${phone-number}
+
+
+# ================================
+# EUREKA CONFIG
+# ================================
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+
+    service-url:
+      defaultZone: https://eureca-server.onrender.com/eureka
