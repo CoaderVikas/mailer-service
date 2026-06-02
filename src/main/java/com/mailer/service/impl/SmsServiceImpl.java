@@ -32,43 +32,36 @@ public class SmsServiceImpl implements SmsService {
 
 	private final TwilioConfig twilioConfig;
 
-    @Override
-    @Async
-    @Retryable(value = Exception.class, maxRetries = 3, delay = 2000)
-    public CompletableFuture<SmsResponse> sendOtp(SmsRequest request) {
+	@Override
+	@Async
+	@Retryable(value = Exception.class, maxRetries = 3, delay = 2000)
+	public CompletableFuture<SmsResponse> sendOtp(SmsRequest request) {
 
-        try {
-            // 1️ Generate OTP if not provided
-            if (request.getOtp() == null || request.getOtp().isEmpty()) {
-                request.setOtp(generateOtp(request.getOtpLength() > 0 ? request.getOtpLength() : 6));
-            }
+		try {
+			// 1️ Generate OTP if not provided
+			if (request.getOtp() == null || request.getOtp().isEmpty()) {
+				request.setOtp(generateOtp(request.getOtpLength() > 0 ? request.getOtpLength() : 6));
+			}
 
-            String smsMessage = "Your OTP is: " + request.getOtp();
+			String smsMessage = "Your OTP is: " + request.getOtp();
 
-            log.info("Sending SMS via Twilio to {}: {}", request.getMobileNumber(), smsMessage);
+			log.info("Sending SMS via Twilio to {}: {}", request.getMobileNumber(), smsMessage);
 
-            // 2️⃣ Send SMS using Twilio
-            Message twilioMessage = Message.creator(
-                    new PhoneNumber(request.getMobileNumber()),
-                    new PhoneNumber(twilioConfig.getFromPhone()),
-                    smsMessage
-            ).create();
+			// 2️⃣ Send SMS using Twilio
+			Message twilioMessage = Message.creator(new PhoneNumber(request.getMobileNumber()),
+					new PhoneNumber(twilioConfig.getFromPhone()), smsMessage).create();
 
-            log.info("Twilio message SID: " + twilioMessage.getSid());
+			log.info("Twilio message SID: " + twilioMessage.getSid());
 
-            return CompletableFuture.completedFuture(
-                    SmsResponse.builder()
-                            .success(true)
-                            .message("OTP sent successfully to " + request.getMobileNumber())
-                            .build()
-            );
+			return CompletableFuture.completedFuture(SmsResponse.builder().success(true)
+					.message("OTP sent successfully to " + request.getMobileNumber()).build());
 
-        } catch (Exception e) {
-            log.error("Error sending SMS to {}: {}", request.getMobileNumber(), e.getMessage(), e);
-            throw e; // trigger retry
-        }
-    }
-	
+		} catch (Exception e) {
+			log.error("Error sending SMS to {}: {}", request.getMobileNumber(), e.getMessage(), e);
+			throw e; // trigger retry
+		}
+	}
+
 	// Generate numeric OTP
 	private String generateOtp(int length) {
 		Random random = new Random();
