@@ -5,40 +5,40 @@ spring:
   application:
     name: mailer-service
 
-  # Mail configuration
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${username}
-    password: ${password}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
+# Mail configuration
+mail:
+  host: smtp.gmail.com
+  port: 587
+  username: ${username}
+  password: ${password}
+  properties:
+    mail:
+      smtp:
+        auth: true
+        starttls:
+          enable: true
 
-  # Kafka configuration
-  kafka:
-    bootstrap-servers: ${kafka_bootstrap_servers}
-    username: ${kafka_username}
-    password: ${KAFKA_PASSWORD}
+# Kafka configuration
+kafka:
+  bootstrap-servers: ${kafka_bootstrap_servers}
+  username: ${kafka_username}
+  password: ${KAFKA_PASSWORD}
+  properties:
+    security.protocol: SASL_SSL
+    sasl:
+      mechanism: SCRAM-SHA-256
+      jaas.config: >
+        org.apache.kafka.common.security.scram.ScramLoginModule required
+        username="${kafka_username}"
+        password="${KAFKA_PASSWORD}";
+  consumer:
+    group-id: mailer-group-dev
+    auto-offset-reset: earliest
+    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
     properties:
-      security.protocol: SASL_SSL
-      sasl:
-        mechanism: SCRAM-SHA-256
-        jaas.config: >
-          org.apache.kafka.common.security.scram.ScramLoginModule required
-          username="${kafka_username}"
-          password="${KAFKA_PASSWORD}";
-    consumer:
-      group-id: mailer-group-dev
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "*"
-        spring.json.value.default.type: com.mailer.event.UserRegisteredEvent
+      spring.json.trusted.packages: "*"
+      spring.json.value.default.type: com.mailer.event.UserRegisteredEvent
 
 # Twilio configuration
 twilio:
@@ -52,8 +52,19 @@ twilio:
 # ================================
 eureka:
   client:
-    register-with-eureka: true
-    fetch-registry: true
-
     service-url:
       defaultZone: https://eureca-server.onrender.com/eureka
+  instance:
+    prefer-ip-address: true
+# ================================
+# ACTUATOR + PROMETHEUS
+# ================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,metrics
+
+  endpoint:
+    health:
+      show-details: always
