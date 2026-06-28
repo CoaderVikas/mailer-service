@@ -20,7 +20,7 @@ spring:
 
   # Kafka configuration (ISE BHI SPRING KE ANDAR HONA CHAHIYE)
   kafka:
-    bootstrap-servers: ${kafka_bootstrap_servers}
+    bootstrap-servers: localhost:9092
     username: ${kafka_username}
     password: ${KAFKA_PASSWORD}
     properties:
