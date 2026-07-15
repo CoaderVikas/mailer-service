@@ -1,5 +1,5 @@
 server:
-  port: 9093
+  port: 9089
 
 spring:
   application:
@@ -42,3 +42,7 @@ twilio:
   account-sid: ${TWILIO_SID}
   auth-token: ${TWILIO_AUTH_TOKEN}
   phone-number: ${phone-number}
+
+resend:
+  api-key: ${RESEND_API_KEY}
+  sender-email: ${RESEND_SENDER_EMAIL:onboarding@resend.dev}

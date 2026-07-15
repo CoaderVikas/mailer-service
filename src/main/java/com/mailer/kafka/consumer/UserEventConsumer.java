@@ -1,5 +1,6 @@
 package com.mailer.kafka.consumer;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.kafka.retrytopic.TopicSuffixingStrategy;
@@ -24,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Lazy
 public class UserEventConsumer {
 
 	private final MailService mailService;

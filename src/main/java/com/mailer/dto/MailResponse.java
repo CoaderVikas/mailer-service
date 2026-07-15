@@ -20,4 +20,5 @@ import lombok.NoArgsConstructor;
 public class MailResponse {
     private boolean success;
     private String message;
+    private String errorMessage;
 }
