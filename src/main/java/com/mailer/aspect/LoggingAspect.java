@@ -23,7 +23,11 @@ public class LoggingAspect {
 	private static final Logger log = LoggerFactory.getLogger(LoggingAspect.class);
 	
 	@Around(
-			 "execution(* com.mailer..*(..))" 
+	         "execution(* com.mailer.service..*(..)) ||"+
+    		 "execution(* com.mailer.config..*(..)) ||"+
+	         "execution(* com.mailer.controller..*(..)) ||"+
+	         "execution(* com.mailer.filter..*(..)) ||"+
+    		 "execution(* com.mailer.kafka..*(..)) ||"
 		)
 	public Object trackMethodExecution(ProceedingJoinPoint joinPoint) throws Throwable {
 		String className = joinPoint.getTarget().getClass().getSimpleName();
