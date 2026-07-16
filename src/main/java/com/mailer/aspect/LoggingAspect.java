@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Description: this class is responsible for logging method execution
  * Author     : Vikas Yadav
@@ -18,10 +20,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Aspect
+@Slf4j
 public class LoggingAspect {
 
-	private static final Logger log = LoggerFactory.getLogger(LoggingAspect.class);
-	
 	@Around(
 	         "execution(* com.mailer.service..*(..)) ||"+
     		 "execution(* com.mailer.config..*(..)) ||"+
