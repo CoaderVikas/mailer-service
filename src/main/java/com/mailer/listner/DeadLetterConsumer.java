@@ -1,5 +1,6 @@
 package com.mailer.listner;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@Lazy
 public class DeadLetterConsumer {
 
 	// GroupId ko alag rakha hai taaki main group se takkar na ho
